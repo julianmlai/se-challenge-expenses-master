@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %} 
+  <div class="form-group">
+    {{ form.as_p }}
+  </div>
+  <input type="submit" value="submit" />
+</form>
+
+{% if error %}
+	<p> Error: {{error}} </p>
+{% elif expenseDict %}
+	<!-- This table would be very difficult to read if the expenses submitted covered many months. 
+	Future iterations should include pagination, filtering (by years, employee, categories, etc)
+	-->
+    <table border=1>
+    	<tr>
+    		<td width=200>Expense Date</td>
+    		<td width=200>Expense Value</td>
+    	</tr>
+    	<!-- Assumes the currency is $. If multiple currencies are allowed,
+    	currency could be returned rather than hardcoded here. This also means our table
+    	would need to be updated since each month could have multiple currencies to display.
+    	A possible solution is to include everything to one currency if we only want to
+    	know the total value.  -->
+    {% for key, value in expenseDict %}
+        <tr>
+        	<td> {{ key }} </td>
+        	<td align="right"> ${{ value|floatformat:2 }} </td>
+        </tr>
+    {% endfor %}
+{% else %}
+    <p>No data available.</p>
+{% endif %}
+{% endblock %}
